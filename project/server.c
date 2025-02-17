@@ -7,8 +7,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define MSS 1012 // MSS = Maximum Segment Size (aka max length)
-
 int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "Usage: server <port>\n");
