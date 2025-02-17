@@ -6,6 +6,18 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#define MSS 1012 // MSS = Maximum Segment Size (aka max length)
+
+typedef struct
+{
+    uint16_t seq;
+    uint16_t ack;
+    uint16_t length;
+    uint16_t window;
+    uint16_t flags;
+    uint16_t unused;
+    uint8_t payload[0];
+} packet;
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -37,9 +49,13 @@ int main(int argc, char** argv) {
     char buffer;
 
     // Wait for client connection
-    int bytes_recvd = recvfrom(sockfd, &buffer, sizeof(buffer), MSG_PEEK,
-                               (struct sockaddr*) &client_addr, &s);
+    // Assume the socket has been set up with all other variables
+    char buf[sizeof(packet) + MSS] = {0};
+    packet *pkt = (packet *)buf;
+    int bytes_recvd = recvfrom(sockfd, pkt, sizeof(packet) + MSS, 0, (struct sockaddr *)&server_addr, &s);
 
+    uint16_t seq = ntohs(pkt->seq); // Make sure to convert to little endian
+    
     init_io();
     listen_loop(sockfd, &client_addr, SERVER, input_io, output_io);
 
