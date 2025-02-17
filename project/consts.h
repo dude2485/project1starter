@@ -7,6 +7,7 @@
 
 // Maximum payload size
 #define MAX_PAYLOAD 1012
+#define MSS 1012 // MSS = Maximum Segment Size (aka max length)
 
 // Retransmission time
 #define TV_DIFF(end, start)                                                    \
